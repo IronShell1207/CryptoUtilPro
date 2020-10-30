@@ -13,42 +13,25 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using inifiles;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 
 namespace CryptoUtilPro
 {
     public partial class Form1 : MetroFramework.Forms.MetroForm
     {
-        public string DirCry
-        {
-            get
-            {
-                string dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\CryptCache\";
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-                return dir;
-            }
-        }
+        public IniFile iniFile = new IniFile(JsonWorker.DirCry + "settings.ini");
         private AesCryptoServiceProvider sSecretKey;
         public Form1(string[] args)
         {
             InitializeComponent();
             if (args.Length > 0)
+            
                 FileList.Items.Add(args[0]);
+  
         }
-        private List<String> filesTO;
-        public List<String> FilesTo
-        {
-            get
-            {
-                if (filesTO != null)
-                {
-                    return filesTO;
-                }
-                filesTO = new List<String> { };
-                return filesTO;
-            }
-            set { filesTO = value; }
-        }
+
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.textBox1.Text == "")
@@ -65,11 +48,17 @@ namespace CryptoUtilPro
             }
             else
             {
+                progress1.Value = 0;
+                progress1.Maximum = FileList.Items.Count;
                 this.sSecretKey = this.GenerateKey();
                 GCHandle gcHandle = GCHandle.Alloc((object)this.sSecretKey.Key, GCHandleType.Pinned);
                 foreach (object obj in this.FileList.Items)
+                {
                     this.EncryptFile(obj.ToString(), obj.ToString() + ".encr", this.sSecretKey);
+                    progress1.Value++;
+                }
                 gcHandle.Free();
+
             }
         }
         public void EncryptFile(string sInputFilename, string sOutputFilename, AesCryptoServiceProvider sKey)
@@ -100,7 +89,7 @@ namespace CryptoUtilPro
             cryptoServiceProvider.IV = bytes2;
             return cryptoServiceProvider;
         }
-        public bool DecryptFile(string sInputFilename, string sOutputFilename, AesCryptoServiceProvider sKey)
+        public bool DecryptFile(string sInputFilename, string sOutputFilename, AesCryptoServiceProvider sKey, bool isNotify)
         {
             AesCryptoServiceProvider cryptoServiceProvider = new AesCryptoServiceProvider();
             cryptoServiceProvider.Key = sKey.Key;
@@ -118,7 +107,7 @@ namespace CryptoUtilPro
                 {
                     if (Encoding.Default.GetString(numArray).Substring(16, 16) != this.textBox1.Text)
                     {
-                        int num2 = (int)MetroMessageBox.Show(this, "Введен неверный открытый ключ!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (isNotify) MetroMessageBox.Show(this, "Введен неверный открытый ключ!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         fileStream.Flush();
                         fileStream.Close();
                         File.Delete(sOutputFilename);
@@ -152,64 +141,41 @@ namespace CryptoUtilPro
             else
             {
                 var newKeyD = new CryptKey { CryptyKey = textBox1.Text, NameTu = textBox2.Text };
-
-
+                progress1.Value = 0;
+                progress1.Maximum = FileList.Items.Count;
                 this.sSecretKey = this.GenerateKey();
                 foreach (object obj in this.FileList.Items)
                 {
                     int length = obj.ToString().Length;
-                    if (DecryptFile(obj.ToString(), obj.ToString().Substring(0, length - 5), this.sSecretKey))
-                        if (!CryKeys.Contains(newKeyD))
+                    if (DecryptFile(obj.ToString(), obj.ToString().Substring(0, length - 5), this.sSecretKey, true))
+                        if (!comboBox1.Items.Contains(newKeyD.NameTu + ": " + newKeyD.CryptyKey))
                         {
-                            CryKeys.Add(newKeyD);
-                            CreateJsnFile(CryKeys, DirCry + "jsnCry.json");
+                            JsonWorker.CryKeys.Add(newKeyD);
+                            JsonWorker.CreateJsnFile(JsonWorker.CryKeys, JsonWorker.DirCry + "jsnCry.json");
                         }
+                    progress1.Value++;
                 }
-
             }
         }
-        private List<CryptKey> cryKeys;
-        public List<CryptKey> CryKeys
+        DialogResult TryToDecrupt()
         {
-            get
+            if (JsonWorker.CryKeys.Any())
             {
-                if (cryKeys == null)
+                sSecretKey = GenerateKey();
+                foreach (object obj in FileList.Items)
                 {
-                    string path = DirCry + "jsnCry.json";
-                    if (File.Exists(path))
-                        cryKeys = ReadJsnFile(path);
-                    else cryKeys = new List<CryptKey> { };
+                    int length = obj.ToString().Length;
+                    for (int i2 = 0; i2 < JsonWorker.CryKeys.Count; i2++)
+                    {
+                        comboBox1.SelectedIndex = i2;
+                        if (DecryptFile(obj.ToString(), obj.ToString().Substring(0, length - 5), sSecretKey, false))
+                            return DialogResult.OK;
+                    }
                 }
-                return cryKeys;
             }
+            return DialogResult.Cancel;
         }
-        public class CryptKey
-        {
-            public string NameTu { get; set; }
-            public string CryptyKey { get; set; }
-        }
-        public List<CryptKey> ReadJsnFile(string path)
-        {
-            List<CryptKey> stations = new List<CryptKey> { };
-            using (StreamReader jsReader = new StreamReader(path))
-            {
-                CryptKey station = new CryptKey();
 
-                JsonReader json = new JsonTextReader(jsReader);
-                JsonSerializer jsonSerializer = new JsonSerializer();
-                var favoriteList = jsonSerializer.Deserialize<List<CryptKey>>(json);
-                return favoriteList;
-            }
-        }
-        public void CreateJsnFile(List<CryptKey> listkeys, string path)
-        {
-            using (StreamWriter sw = new StreamWriter(path, false))
-            {
-                JsonWriter jsonWriter = new JsonTextWriter(sw);
-                JsonSerializer jsnS = new JsonSerializer();
-                jsnS.Serialize(jsonWriter, listkeys);
-            }
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -224,23 +190,39 @@ namespace CryptoUtilPro
         {
             FileList.Items.Clear();
         }
+        void SetEnable()
+        {
+            if (iniFile.KeyExists("IndexLast", "Settings"))
+            {
+                var index1 = int.Parse(iniFile.ReadINI("Settings", "IndexLast"));
+                comboBox1.SelectedIndex = comboBox1.Items.Count - 1 >= index1 ? index1 : 0;
+            }
+            if (iniFile.KeyExists("ThemeLast", "Settings"))
+                metroToggle1.Checked = bool.Parse(iniFile.ReadINI("Settings", "ThemeLast"));
+            if (iniFile.KeyExists("isAutoDecr", "Settings"))
+            {
+                metroToggle2.Checked = bool.Parse(iniFile.ReadINI("Settings", "isAutoDecr"));
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (CryKeys.Count != 0)
+            if (JsonWorker.CryKeys.Count != 0)
             {
-                foreach (CryptKey cryptKey in CryKeys)
+                foreach (CryptKey cryptKey in JsonWorker.CryKeys)
                 {
                     comboBox1.Items.Add(cryptKey.NameTu + ": " + cryptKey.CryptyKey);
                 }
-                comboBox1.SelectedIndex = 0;
+                //  comboBox1.SelectedIndex = 0;
             }
             else comboBox1.Text = "Нет сохраненных ключей";
             this.StyleManager = mSM;
-            if (File.Exists(DirCry + "setts.json"))
+            SetEnable();
+            if (metroToggle2.Checked==true)
+            if (FileList.Items.Count>0)
             {
-                var set = ReadJsnFile(DirCry + "setts.json");
-                metroToggle1.Checked = bool.Parse(set[0].CryptyKey);
+                if (TryToDecrupt() == DialogResult.OK)
+                    Application.Exit();
             }
         }
 
@@ -252,7 +234,7 @@ namespace CryptoUtilPro
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
             var fil = (string[])e.Data.GetData(DataFormats.FileDrop);
-            FilesTo.AddRange(fil);
+            JsonWorker.FilesTo.AddRange(fil);
             foreach (string fileP in fil)
                 FileList.Items.Add(fileP);
         }
@@ -264,9 +246,7 @@ namespace CryptoUtilPro
 
         private void metroToggle1_CheckedChanged(object sender, EventArgs e)
         {
-            List<CryptKey> ds = new List<CryptKey> { };
-            ds.Add(new CryptKey { CryptyKey = metroToggle1.Checked.ToString(), NameTu = "Theme" });
-            CreateJsnFile(ds, DirCry + "setts.json");
+            iniFile.Write("Settings", "ThemeLast", metroToggle1.Checked.ToString());
             if (metroToggle1.Checked == true)
             {
                 mSM.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -286,8 +266,9 @@ namespace CryptoUtilPro
         {
             if (comboBox1.SelectedIndex > -1)
             {
-                textBox1.Text = CryKeys[comboBox1.SelectedIndex].CryptyKey;
-                textBox2.Text = CryKeys[comboBox1.SelectedIndex].NameTu;
+                textBox1.Text = JsonWorker.CryKeys[comboBox1.SelectedIndex].CryptyKey;
+                textBox2.Text = JsonWorker.CryKeys[comboBox1.SelectedIndex].NameTu;
+                iniFile.Write("Settings", "IndexLast", comboBox1.SelectedIndex.ToString());
             }
         }
 
@@ -302,6 +283,11 @@ namespace CryptoUtilPro
                 {
                     FileList.Items.RemoveAt(FileList.SelectedIndex);
                 }
+        }
+        private void metroToggle2_CheckedChanged(object sender, EventArgs e)
+        {
+            iniFile.Write("Settings", "isAutoDecr", metroToggle2.Checked.ToString());
+
         }
     }
 }

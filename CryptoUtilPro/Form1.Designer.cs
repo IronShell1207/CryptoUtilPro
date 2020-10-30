@@ -41,20 +41,26 @@
             this.comboBox1 = new MetroFramework.Controls.MetroComboBox();
             this.metroToggle1 = new MetroFramework.Controls.MetroToggle();
             this.mSM = new MetroFramework.Components.MetroStyleManager(this.components);
+            this.progress1 = new MetroFramework.Controls.MetroProgressBar();
+            this.metroToggle2 = new MetroFramework.Controls.MetroToggle();
+            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             ((System.ComponentModel.ISupportInitialize)(this.mSM)).BeginInit();
             this.SuspendLayout();
             // 
             // FileList
             // 
+            this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.FileList.BackColor = System.Drawing.Color.White;
             this.FileList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.FileList.Font = new System.Drawing.Font("Segoe UI Historic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FileList.Font = new System.Drawing.Font("Garamond", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FileList.ForeColor = System.Drawing.Color.Black;
             this.FileList.FormattingEnabled = true;
-            this.FileList.ItemHeight = 17;
-            this.FileList.Location = new System.Drawing.Point(13, 63);
+            this.FileList.ItemHeight = 18;
+            this.FileList.Location = new System.Drawing.Point(13, 59);
             this.FileList.Name = "FileList";
-            this.FileList.Size = new System.Drawing.Size(435, 104);
+            this.FileList.Size = new System.Drawing.Size(435, 110);
             this.FileList.TabIndex = 0;
             this.FileList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FileList_KeyPress);
             this.FileList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FileList_KeyUp);
@@ -66,9 +72,11 @@
             // 
             // buttonAddFiles
             // 
-            this.buttonAddFiles.Location = new System.Drawing.Point(178, 175);
+            this.buttonAddFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddFiles.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            this.buttonAddFiles.Location = new System.Drawing.Point(230, 175);
             this.buttonAddFiles.Name = "buttonAddFiles";
-            this.buttonAddFiles.Size = new System.Drawing.Size(125, 23);
+            this.buttonAddFiles.Size = new System.Drawing.Size(101, 23);
             this.buttonAddFiles.TabIndex = 8;
             this.buttonAddFiles.Text = "Открыть файлы";
             this.buttonAddFiles.UseSelectable = true;
@@ -76,9 +84,10 @@
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(313, 175);
+            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClear.Location = new System.Drawing.Point(337, 175);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(135, 23);
+            this.buttonClear.Size = new System.Drawing.Size(111, 23);
             this.buttonClear.TabIndex = 9;
             this.buttonClear.Text = "Очистить список";
             this.buttonClear.UseSelectable = true;
@@ -86,6 +95,8 @@
             // 
             // buttonEnq
             // 
+            this.buttonEnq.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEnq.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.buttonEnq.Location = new System.Drawing.Point(230, 235);
             this.buttonEnq.Name = "buttonEnq";
             this.buttonEnq.Size = new System.Drawing.Size(104, 29);
@@ -96,6 +107,7 @@
             // 
             // buttonDec
             // 
+            this.buttonDec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonDec.Location = new System.Drawing.Point(344, 235);
             this.buttonDec.Name = "buttonDec";
             this.buttonDec.Size = new System.Drawing.Size(104, 29);
@@ -106,6 +118,8 @@
             // 
             // textBox1
             // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
             // 
@@ -138,6 +152,7 @@
             // 
             // textBox2
             // 
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
             // 
@@ -171,6 +186,8 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.ItemHeight = 23;
             this.comboBox1.Location = new System.Drawing.Point(13, 235);
@@ -182,6 +199,7 @@
             // 
             // metroToggle1
             // 
+            this.metroToggle1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.metroToggle1.AutoSize = true;
             this.metroToggle1.Location = new System.Drawing.Point(358, 31);
             this.metroToggle1.Name = "metroToggle1";
@@ -196,12 +214,47 @@
             this.mSM.Owner = this;
             this.mSM.Style = MetroFramework.MetroColorStyle.Lime;
             // 
+            // progress1
+            // 
+            this.progress1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progress1.Location = new System.Drawing.Point(13, 175);
+            this.progress1.Name = "progress1";
+            this.progress1.Size = new System.Drawing.Size(211, 23);
+            this.progress1.TabIndex = 19;
+            // 
+            // metroToggle2
+            // 
+            this.metroToggle2.AutoSize = true;
+            this.metroToggle2.Checked = true;
+            this.metroToggle2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.metroToggle2.DisplayStatus = false;
+            this.metroToggle2.Location = new System.Drawing.Point(301, 31);
+            this.metroToggle2.Name = "metroToggle2";
+            this.metroToggle2.Size = new System.Drawing.Size(50, 17);
+            this.metroToggle2.TabIndex = 20;
+            this.metroToggle2.Text = "On";
+            this.metroToggle2.UseSelectable = true;
+            this.metroToggle2.CheckedChanged += new System.EventHandler(this.metroToggle2_CheckedChanged);
+            // 
+            // metroLabel1
+            // 
+            this.metroLabel1.AutoSize = true;
+            this.metroLabel1.Location = new System.Drawing.Point(172, 29);
+            this.metroLabel1.Name = "metroLabel1";
+            this.metroLabel1.Size = new System.Drawing.Size(123, 19);
+            this.metroLabel1.TabIndex = 21;
+            this.metroLabel1.Text = "АвтоРасшифровка";
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(461, 277);
+            this.Controls.Add(this.metroLabel1);
+            this.Controls.Add(this.metroToggle2);
+            this.Controls.Add(this.progress1);
             this.Controls.Add(this.metroToggle1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox2);
@@ -215,8 +268,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(350, 277);
             this.Name = "Form1";
-            this.Resizable = false;
             this.Text = "Крипто AES";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
@@ -240,6 +293,9 @@
         private MetroFramework.Controls.MetroComboBox comboBox1;
         private MetroFramework.Controls.MetroToggle metroToggle1;
         private MetroFramework.Components.MetroStyleManager mSM;
+        private MetroFramework.Controls.MetroProgressBar progress1;
+        private MetroFramework.Controls.MetroLabel metroLabel1;
+        private MetroFramework.Controls.MetroToggle metroToggle2;
     }
 }
 
